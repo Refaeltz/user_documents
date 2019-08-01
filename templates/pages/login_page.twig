@@ -1,0 +1,25 @@
+{%  extends 'base.html.twig' %}
+{% block title %} login {% endblock %}
+{% block stylesheets %}
+	{{ parent() }}
+	{#<link rel="stylesheet" href="{{ asset('css/pages/login.css') }}"/>#}
+{% endblock %}
+{% block body %}
+	<div class="main-container">
+		<div class="login-container">
+			<form id="login-form" method="post">
+				<h3 class="login-container-title">Login</h3>
+				<h5 class="login-container-title">User In Ewave</h5>
+				<div class="login-container-username">
+					<span>user name:</span>
+					<input type="text" name="username" placeholder="username" value="rafi">
+				</div>
+				<div class="login-container-password">
+					<span>password:</span>
+					<input type="password" name="password" placeholder="password" value="aa23456">
+				</div>
+				<input type="submit" value="Log In">
+			</form>
+		</div>
+	</div>
+{% endblock %}

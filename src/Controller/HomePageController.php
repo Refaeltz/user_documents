@@ -9,15 +9,16 @@
 namespace App\Controller;
 
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Component\HttpFoundation\Response;
 
-class HomePageController
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Routing\Annotation\Route;
+
+class HomePageController extends AbstractController
 {
 	/**
 	 * @Route("/")
 	 */
 	public function homepage(){
-		return new Response('hello world');
+		return $this->render("pages/login_page.twig");
 	}
 }
