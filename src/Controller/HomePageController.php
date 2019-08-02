@@ -8,17 +8,15 @@
 
 namespace App\Controller;
 
-
-
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
 class HomePageController extends AbstractController
 {
 	/**
-	 * @Route("/")
+	 * @Route("/", name="homepage")
 	 */
 	public function homepage(){
-		return $this->render("pages/login_page.twig");
+		return $this->render("base.html.twig");
 	}
 }

@@ -1,0 +1,17 @@
+.header {
+  width: 100%;
+  background: #76b0b6;
+  display: flex;
+  justify-content: stretch;
+  align-items: center; }
+  .header-logo {
+    padding-left: 15px;
+    user-select: none;
+    flex: 1; }
+    .header-logo-icon {
+      width: 110px; }
+  .header > a {
+    flex: 1;
+    max-width: 100px; }
+
+/*# sourceMappingURL=header.css.map */

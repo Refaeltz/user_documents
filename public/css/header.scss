@@ -1,0 +1,25 @@
+@import "theme";
+
+.header{
+  width: 100%;
+  background: $green;
+  display: flex;
+  justify-content: stretch;
+  align-items: center;
+
+  &-logo{
+	padding-left: 15px;
+	user-select: none;
+	flex: 1;
+
+	&-icon{
+	  width: 110px;
+	}
+  }
+
+  & > a{
+	flex: 1;
+	max-width: 100px;
+  }
+}
+

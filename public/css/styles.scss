@@ -1,0 +1,29 @@
+@import "theme";
+
+body{
+  background: $blue;
+  height: 100vh;
+  box-sizing: border-box;
+  margin: 0;
+}
+
+a{
+  color: inherit !important;
+  text-decoration: none;
+}
+
+.button{
+  background:$buttonBackground;
+  padding: 15px;
+  font-size: 14px;
+  margin: 10px;
+  border-radius: 8px;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+
+  &:hover{
+	color: $white;
+  }
+}
+
