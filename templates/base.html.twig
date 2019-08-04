@@ -97,8 +97,10 @@
     <script type="application/javascript">
         $(function () {
             $(document).ready(function () {
-				{% if(app.session.get('user_exist')) %}
+				{% if(user_exist is defined) %}
+				{% if(user_exist) %}
                     alert('user already exist please login!');
+				{% endif %}
                 {% endif %}
 			});
 		});
