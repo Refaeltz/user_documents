@@ -21,22 +21,29 @@ class HomePageController extends AbstractController
 	 */
 	public function homepage(EntityManagerInterface $entityManager){
 		$userManager = new UserManager();
+		$userExist = $userManager->getUserExist();
+		$userManager->setUserExist(false);
+		$uploadsArr = array();
 
 		if($userManager->user_id){
 			$queryBuilder = $entityManager->getRepository(Upload::class);
 			$fileListArr = $queryBuilder->findBy(array('user_id' => $userManager->user_id), null, 10);
 
-			$uploadsArr = array_map(function ($upload){
-				return array(
-					'file_name' => $upload->getFileName(),
-					'media_id' => $upload->getId(),
-					'insert_ts' => $upload->getInsertTs()
+
+			if(!!$fileListArr){
+				$uploadsArr = array_map(function ($upload){
+					return array(
+						'file_name' => $upload->getFileName(),
+						'media_id' => $upload->getId(),
+						'insert_ts' => $upload->getInsertTs()
 					);
-			}, $fileListArr);
+				}, $fileListArr);
+			}
 		}
 
 		return $this->render("base.html.twig", array(
-			'uploads' => $uploadsArr
+			'uploads' => $uploadsArr,
+			'user_exist' => $userExist
 		));
 	}
 }

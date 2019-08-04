@@ -17,7 +17,7 @@ class UserManager
 	private static $SUFFIX = "_exercise";
 	public $user_id;
 	public $user_name;
-
+	private $user_exist = false;
 	/**
 	 * UserManager constructor.
 	 * @param $user_id
@@ -37,6 +37,7 @@ class UserManager
 		else{
 			$this->user_id = $session->get('user_id');
 			$this->user_name = $session->get('user_name');
+			$this->user_exist = $session->get('user_exist');
 		}
 	}
 
@@ -44,6 +45,26 @@ class UserManager
 		$session = new Session();
 		$session->clear();
 	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getUserExist()
+	{
+		return $this->user_exist;
+	}
+
+	/**
+	 * @param mixed $user_exist
+	 */
+	public function setUserExist($user_exist): void
+	{
+		$session = new Session();
+		$session->set('user_exist', $user_exist);
+		$this->user_exist = $user_exist;
+	}
+
+
 
 	public static function encryptPassword($password){
 		return md5(self::$PREFIX.$password.self::$SUFFIX);

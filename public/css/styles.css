@@ -71,4 +71,36 @@ a {
     .table-btn-download > svg:hover {
       color: #18addb; }
 
+.main-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; }
+
+.register-container {
+  border: 1px solid #000000;
+  padding: 15px;
+  border-radius: 16px;
+  text-align: center;
+  max-width: 370px;
+  width: 85%;
+  background: #f0f8ff; }
+  .register-container form > div {
+    display: flex;
+    justify-content: stretch;
+    padding-top: 5px;
+    padding-bottom: 5px; }
+    .register-container form > div > span {
+      flex: 1; }
+    .register-container form > div > input {
+      flex: 2; }
+  .register-container form > input[type="submit"] {
+    padding: 5px;
+    margin-top: 10px;
+    border-radius: 8px;
+    border: 1px;
+    cursor: pointer; }
+    .register-container form > input[type="submit"]:hover {
+      color: #ffffff; }
+
 /*# sourceMappingURL=styles.css.map */

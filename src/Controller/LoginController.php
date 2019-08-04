@@ -38,20 +38,28 @@ class LoginController extends AbstractController
 	/**
 	 * @Route("/login/new", name="createNewUser", methods={"POST"})
 	 */
-	public function createNewUser(EntityManagerInterface $entityManager){
+	public function createNewUser(EntityManagerInterface $entityManager, Request $request){
 		$user = new User();
 		$time = time();
-		$user->setUserName('rafi');
-		$user->setPassword(UserManager::encryptPassword('aa23456'));
-		$user->setRegisteredTs($time);
-		$user->setLastUpdate($time);
+		$user->setUserName($request->get("username"));
+		$queryBuilder = $entityManager->getRepository(User::class);
+		$user = $queryBuilder->findOneBy(array('user_name' => $user->getUserName()));
 
-		$entityManager->persist($user);
-		$user_id = $user->getId();
+		if($user->getId()){
+			
+			$userManager = new UserManager();
+			$userManager->setUserExist(true);
+		}
+		else{
+			$user->setPassword(UserManager::encryptPassword($request->get("password")));
+			$user->setRegisteredTs($time);
+			$user->setLastUpdate($time);
+			$entityManager->persist($user);
+			$entityManager->flush();
+			$userManager = new UserManager($user->getId(),$user->getUserName());
+		}
 
-		$entityManager->flush();
-
-		return new JsonResponse(array($user_id));
+		return $this->redirectToRoute("homepage");
 	}
 
 	/**
