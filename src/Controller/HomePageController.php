@@ -25,39 +25,18 @@ class HomePageController extends AbstractController
 		if($userManager->user_id){
 			$queryBuilder = $entityManager->getRepository(Upload::class);
 			$fileListArr = $queryBuilder->findBy(array('user_id' => $userManager->user_id), null, 10);
-		}
-		if(empty($fileListArr)){
-			$fileListArr = array(
-				array(
-					'file_name' => 'file_name',
-					'media_id' => 1,
-					'insert_ts' => 1564860884
-				),
-				array(
-					'file_name' => 'file_name',
-					'media_id' => 2,
-					'insert_ts' => 1564860884
-				),
-				array(
-					'file_name' => 'file_name',
-					'media_id' => 3,
-					'insert_ts' => 1564860884
-				),
-				array(
-					'file_name' => 'file_name',
-					'media_id' => 4,
-					'insert_ts' => 1564860884
-				),
-				array(
-					'file_name' => 'file_name',
-					'media_id' => 5,
-					'insert_ts' => 1564860884
-				),
-			);
+
+			$uploadsArr = array_map(function ($upload){
+				return array(
+					'file_name' => $upload->getFileName(),
+					'media_id' => $upload->getId(),
+					'insert_ts' => $upload->getInsertTs()
+					);
+			}, $fileListArr);
 		}
 
 		return $this->render("base.html.twig", array(
-			'uploads' => $fileListArr
+			'uploads' => $uploadsArr
 		));
 	}
 }

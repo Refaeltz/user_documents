@@ -1,24 +1,20 @@
 {%  extends 'base.html.twig' %}
-{% block title %} login {% endblock %}
+{% block title %} uploads {% endblock %}
 {% block stylesheets %}
 	{{ parent() }}
 	<link rel="stylesheet" href="{{ asset('css/pages/uploads.css') }}"/>
 {% endblock %}
 {% block body %}
-	<div class="main-container">
-		<div class="upload-container">
-			<form action="{{ path('uploadFile') }}" method="post">
-				<h3 class="upload-container-title">Upload a File</h3>
-				<h5 class="upload-container-title"></h5>
-				<div class="upload-container-name">
-					<span>file name:</span>
-					<input type="text" name="fileName" placeholder="file name" required>
-				</div>
-				<div class="login-container-password">
-					<span>choose a file</span>
-					<input type="file" name="fileToUpload" required>
-				</div>
-				<input type="submit" value="upload file">
-			</form>
+<div class="main-container">
+	<div class="upload-container">
+		<form action="{{ path('uploadFile') }}" method="post" enctype="multipart/form-data">
+			<h3 class="upload-container-title">Upload a File</h3>
+			<h5 class="upload-container-title"></h5>
+			<div class="login-container-password">
+				<span>choose a file</span>
+				<input type="file" name="fileToUpload" required>
+			</div>
+			<input type="submit" value="upload file">
+		</form>
 	</div>
-{% endblock %}
+	{% endblock %}

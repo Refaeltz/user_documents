@@ -9,82 +9,105 @@
 namespace App\Controller;
 
 
+use App\Entity\Upload;
+use App\Manager\UserManager;
+use App\Service\FileUploader;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
+
 class UploadsController extends AbstractController
 {
+	public $err = '';
+	public $msg = '';
+
 	/**
 	 * @Route("/upload/", name="uploadPage")
 	 */
 	public function showUploadsPage(EntityManagerInterface $entityManager)
 	{
-		return $this->render('pages/upload_page.twig');
+		return $this->render('pages/upload_page.twig', array(
+			'msg' => $this->msg,
+			'err' => $this->err
+		));
 	}
 
 	/**
 	 * @Route("/api/uploadUserFile", name="uploadFile", methods={"POST"})
 	 */
-	public function uploadFile(Request $request){
-		$fileName = $request->get("fileName");
-		$fileTitle = $request->get("fileToUpload");
-		$msg = $err = '';
-		dump('Here: ' . __LINE__ . ' at ' . __FILE__,$fileName, $fileTitle);die;
-		
-		return $this->render('pages/upload_page.twig', array(
-			'msg' => $msg,
-			'err' => $err
-		));
+	public function uploadFile(Request $request, EntityManagerInterface $entityManager, FileUploader $fileUploader){
+		$msg = 'success upload';
+		$err = '';
+		$fileToUpload = $request->files->get("fileToUpload");
+
+		if (empty($fileToUpload))
+		{
+			$err = "No file specified";
+		}
+		else
+		{
+			$userManager = new UserManager();
+			$userPath = "\\".$userManager->user_id."\\";
+			$fileTitle = $fileToUpload->getClientOriginalName();
+			$fileSize = $fileToUpload->getClientSize();
+			$fileGuessExtension = $fileToUpload->guessExtension();
+			$newName = $fileUploader->upload($fileToUpload, $userManager->user_id);
+			$userPath .= $newName;
+
+			$time = time();
+			$upload = new Upload();
+			$upload->setFile($fileToUpload);
+			$upload->setFileName($newName);
+			$upload->setFilePath($userPath);
+			$upload->setInsertTs($time);
+			$upload->setUserId($userManager->user_id);
+
+			if(empty($err)){
+				$entityManager->persist($upload);
+				$entityManager->flush();
+				$this->msg = $msg;
+			}
+
+			$this->err = $err;
+		}
+		return $this->redirectToRoute('uploadPage');
 	}
 
 	/**
 	 * @Route("/api/downloadfile/{file_id}", name="downloadUserFile")
 	 */
-	public function downloadFile($file_id)
+	public function downloadFile($file_id, EntityManagerInterface $entityManager, FileUploader $fileUploader)
 	{
-//		$pdfPath = $this->getParameter('dir.downloads').'/sample.pdf';
-		dump('Here: ' . __LINE__ . ' at ' . __FILE__,$this->getParameter('kernel.public')."\images\computer-science.jpg");die;
-		$file_path = $this->getParameter('kernel.project_dir')."\public"."\images\computer-science.jpg";
-		return $this->file($file_path);
+		$userManager = new UserManager();
+		$queryBuilder = $entityManager->getRepository(Upload::class);
+		$upload = $queryBuilder->findOneBy(['id' => $file_id, 'user_id' => $userManager->user_id]);
+		$tmp_dir = $fileUploader->getTargetDirectory()."\\tmp\\";
+
+		$file_path  = $fileUploader->download(new UploadedFile($fileUploader->getTargetDirectory().$upload->getMediaPath(), $upload->getFileName()),$upload->getMediaPath(), $tmp_dir);
+		$response = new BinaryFileResponse($file_path . $upload->getFileName());
+		$response->deleteFileAfterSend(true);
+
+		return $response;
 	}
 
 	/**
-	 * PHP encrypt and decrypt
-	 *
-	 * @param string $action Acceptable values are `encrypt` or `decrypt`.
-	 * @param string $string The string value to encrypt or decrypt.
-	 * @return string
+	 * @Route("/api/deletefile/{file_id}", name="deleteFile")
 	 */
-	private function encrypt_decrypt($action, $string)
-	{
-		$output = false;
+	public function deleteFile($file_id ,EntityManagerInterface $entityManager, FileUploader $fileUploader){
+		$userManager = new UserManager();
+		$queryBuilder = $entityManager->getRepository(Upload::class);
+		$upload = $queryBuilder->findOneBy(['id' => $file_id, 'user_id' => $userManager->user_id]);
 
-		$encrypt_method = "AES-256-CBC";
-		$secret_key = 'eWave';
-		$secret_iv = 'excersize';
-
-		// hash
-		$key = hash('sha256', $secret_key);
-
-		// iv - encrypt method AES-256-CBC expects 16 bytes - else you will get a warning
-		$iv = substr(hash('sha256', $secret_iv), 0, 16);
-
-		if ($action == 'encrypt')
-		{
-			$output = openssl_encrypt($string, $encrypt_method, $key, 0, $iv);
-			$output = base64_encode($output);
-		}
-		else
-		{
-			if ($action == 'decrypt')
-			{
-				$output = openssl_decrypt(base64_decode($string), $encrypt_method, $key, 0, $iv);
-			}
+		if($upload->getId()){
+//			$fileUploader->deleteFile($upload->getMediaPath());
+			$entityManager->remove($upload);
+			$entityManager->flush();
 		}
 
-		return $output;
+		return $this->redirectToRoute("homepage");
 	}
 }

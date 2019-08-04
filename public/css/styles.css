@@ -23,6 +23,20 @@ a {
   .button:hover {
     background-color: #18addb; }
 
+.delete {
+  background: red;
+  padding: 5px;
+  font-size: 14px;
+  margin: 10px;
+  border-radius: 8px;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+  color: #f0f8ff;
+  transition: background-color 0.5s ease-in-out; }
+  .delete:hover {
+    background-color: #0099cb; }
+
 .table {
   width: 90vw;
   height: 80vh;
