@@ -10,10 +10,13 @@
 			loginForm.on('submit',function (e) {
 				e.preventDefault();
 
-				$.post('/login/api?' + loginForm.serialize()).then(function(res){
-					if(!res.err){
-						console.log('rafi');
+				$.post('/api/doLogin?' + loginForm.serialize()).then(function(res){
+					if(!!res.err){
 						console.log(res);
+						alert(res.err);
+					}
+					else{
+						window.location.reload();
 					}
 				});
 			});

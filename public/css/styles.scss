@@ -3,6 +3,8 @@
 body{
   background: $blue;
   height: 100vh;
+  width: 100vw
+;
   box-sizing: border-box;
   margin: 0;
 }
@@ -13,7 +15,7 @@ a{
 }
 
 .button{
-  background:$buttonBackground;
+  background:$lightGreen;
   padding: 15px;
   font-size: 14px;
   margin: 10px;
@@ -21,9 +23,65 @@ a{
   text-align: center;
   cursor: pointer;
   user-select: none;
+  color: $lightGrey;
+  transition: background-color 0.5s ease-in-out;
 
   &:hover{
-	color: $white;
+
+    background-color: $buttonBackground;
   }
 }
 
+.table{
+  width: 90vw;
+  height: 80vh;
+  margin:10px auto;
+  padding: 15px;
+
+  &-header{
+
+    font-weight: bold;
+    color: $white;
+
+    & > div{
+      background-color: $green;
+    }
+  }
+
+  &-row{
+    color: $white;
+    background-color: $lightGreen;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px;
+
+    &:last-child{
+      border-bottom: 1px solid $black;
+    }
+
+  }
+
+  &-col{
+
+    height: 100%;
+    flex: 1;
+    border-top: 1px solid $black;
+    border-right: 1px solid $black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &:first-child{
+      border-left: 1px solid $black;
+    }
+  }
+
+  &-btn-download{
+    height: 70%;
+
+    & > svg:hover{
+      color: $buttonBackground;
+    }
+  }
+}

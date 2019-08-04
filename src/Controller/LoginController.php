@@ -9,8 +9,12 @@
 namespace App\Controller;
 
 
+use App\Entity\User;
+use App\Manager\UserManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 class LoginController extends AbstractController
@@ -20,44 +24,75 @@ class LoginController extends AbstractController
 	 *
 	 * @Route("/login", name="loginPage")
 	 */
-//	public function showLoginPage()
-//	{
-//		return $this->render('pages/login_page.twig');
-//		//return new Response($html);
-//	}
-//
-//	/**
-//	 * @Route("/login/new", name="createNewUser", methods={"POST"})
-//	 */
-//	public function createNewUser(){
-//		$user = new User();
-//		$time = time();
-//		$user->setUserName('rafi');
-//		$user->setPassword('aa23456');
-//		$user->setRegisteredTs($time);
-//		$user->setLastUpdate($time);
-//
-//		$em = $this->getDoctrine()->getManager();
-//		$em->persist($user);
-//		$user_id = $_SESSION['user_id'] = $user->getId();
-//		$em->flush();
-//
-//		return new JsonResponse(array($user_id));
-//	}
-//
-//	/**
-//	 * @Route("api/login/", name="doLogin",methods={"POST"})
-//	 */
-//	public function doLogin(){
-//		$user_name = $_REQUEST['username'];
-//		$password = $_REQUEST['password'];
-//		return new JsonResponse(array($user_name, $password));
-//
-//		$em = $this->getDoctrine()->getManager();
-//		$qb = $em->getRepository(User::class);
-//		$user = $qb->findOneBy(array('user_name'=>$user_name));
-//
-//
-////		$fileListArr = $qb->findOneBy(array('id' => $id, 'password' => $password));
-//	}
+	public function showLoginPage()
+	{
+		$userManager = new UserManager();
+
+		if($userManager->user_id){
+			return $this->redirectToRoute('homepage');
+		}
+
+		return $this->render('pages/login_page.twig');
+	}
+
+	/**
+	 * @Route("/login/new", name="createNewUser", methods={"POST"})
+	 */
+	public function createNewUser(EntityManagerInterface $entityManager){
+		$user = new User();
+		$time = time();
+		$user->setUserName('rafi');
+		$user->setPassword(UserManager::encryptPassword('aa23456'));
+		$user->setRegisteredTs($time);
+		$user->setLastUpdate($time);
+
+		$entityManager->persist($user);
+		$user_id = $user->getId();
+
+		$entityManager->flush();
+
+		return new JsonResponse(array($user_id));
+	}
+
+	/**
+	 * @Route("/api/doLogin", name="doLogin",methods={"POST"})
+	 */
+	public function doLogin(EntityManagerInterface $entityManager, Request $request){
+
+		$user_name = strtolower($request->query->get('username'));
+		$password = UserManager::encryptPassword($request->query->get('password'));
+		$msg = $err = "";
+
+		if(!!$user_name && !!$password)
+		{
+			$queryBuilder = $entityManager->getRepository(User::class);
+			$user = $queryBuilder->findOneBy(['user_name' => $user_name, 'password' => $password]);
+
+			if (!$user) {
+				$err = 'user not found!';
+			}
+			else
+			{
+				$userManager = new UserManager($user->getId(), $user->getUserName());
+				$msg = !!$userManager->user_id ? "user logged!" : "";
+			}
+		}
+		else
+		{
+			$err = "invalid username or password!";
+		}
+
+		return new JsonResponse(array(
+			'err' => $err,
+			'msg' =>  $msg
+		));
+	}
+
+	/**
+	 * @Route("/Logout", name="doLogout")
+	 */
+	public function doLogout(){
+		UserManager::logoutUser();
+		return $this->render("base.html.twig");
+	}
 }

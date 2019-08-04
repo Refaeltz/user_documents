@@ -6,20 +6,54 @@
   display: flex;
   justify-content: stretch;
   align-items: center;
+  height: 80px;
 
   &-logo{
+	margin: 0;
 	padding-left: 15px;
 	user-select: none;
 	flex: 1;
+	color: $lightGrey;
 
 	&-icon{
-	  width: 110px;
+	  height: 100%;
 	}
   }
 
   & > a{
 	flex: 1;
 	max-width: 100px;
+	height: 100%;
+	display: flex;
+	justify-content: left;
+	align-items: center;
+  }
+
+  &-user-name
+  {
+	flex: 1;
+	font-size: 25px;
+	font-weight: bold;
+	color: $lightGrey;
+  }
+}
+
+@media screen and (max-width: 767px){
+  .header{
+	height: 48px;
+
+	&-logo{
+	  font-size: 1em;
+	}
+
+	& .button{
+	  padding: 6px;
+	}
+
+	&-user-name
+	{
+	  font-size: 1em;
+	}
   }
 }
 

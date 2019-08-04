@@ -3,15 +3,37 @@
   background: #76b0b6;
   display: flex;
   justify-content: stretch;
-  align-items: center; }
+  align-items: center;
+  height: 80px; }
   .header-logo {
+    margin: 0;
     padding-left: 15px;
     user-select: none;
-    flex: 1; }
+    flex: 1;
+    color: #f0f8ff; }
     .header-logo-icon {
-      width: 110px; }
+      height: 100%; }
   .header > a {
     flex: 1;
-    max-width: 100px; }
+    max-width: 100px;
+    height: 100%;
+    display: flex;
+    justify-content: left;
+    align-items: center; }
+  .header-user-name {
+    flex: 1;
+    font-size: 25px;
+    font-weight: bold;
+    color: #f0f8ff; }
+
+@media screen and (max-width: 767px) {
+  .header {
+    height: 48px; }
+    .header-logo {
+      font-size: 1em; }
+    .header .button {
+      padding: 6px; }
+    .header-user-name {
+      font-size: 1em; } }
 
 /*# sourceMappingURL=header.css.map */
